@@ -55,15 +55,23 @@ export function ScanResultPage() {
       setProduct(typedProduct)
 
       // Log the scan (including misses, so we know what to add) without
-      // blocking the render on it.
+      // blocking the render on it. Supabase query builders are lazy
+      // thenables -- `void` alone never triggers `.then()`, so the request
+      // never actually fires. Attaching .then() (even just for the error)
+      // is what dispatches it.
       const { data: authData } = await supabase.auth.getUser()
-      void supabase.from('scans').insert({
-        product_id: typedProduct?.id ?? null,
-        metrc_reference_scanned: retailId,
-        found,
-        source: 'qr_scan',
-        user_id: authData.user?.id ?? null,
-      })
+      supabase
+        .from('scans')
+        .insert({
+          product_id: typedProduct?.id ?? null,
+          metrc_reference_scanned: retailId,
+          found,
+          source: 'qr_scan',
+          user_id: authData.user?.id ?? null,
+        })
+        .then(({ error: insertError }) => {
+          if (insertError) console.error('Failed to log scan:', insertError.message)
+        })
     }
 
     run()
