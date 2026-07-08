@@ -40,3 +40,16 @@ export function isValidRetailId(value: string): boolean {
 export function build1a4Url(retailId: string, index?: string): string {
   return `https://app.1a4.com/landingpage/${retailId}${index ? `/${index}` : ''}`
 }
+
+/**
+ * Best-effort normalization for admin data entry: strips the 1a4.com URL
+ * wrapper if one was pasted in, without enforcing the strict retailId shape
+ * the consumer scan route uses. Admins pasting the full URL (the natural
+ * thing to copy off a compliance sheet or QR result) should still end up
+ * with just the reference stored, not the whole link.
+ */
+export function extractMetrcReference(raw: string): string {
+  const trimmed = raw.trim()
+  const match = trimmed.match(/1a4\.com\/landingpage\/([^/?#\s]+)/i)
+  return match ? match[1] : trimmed
+}

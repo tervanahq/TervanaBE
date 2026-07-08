@@ -17,6 +17,9 @@ export function AdminLayout() {
               <Link to="/admin/products" className="text-muted-foreground hover:text-foreground">
                 Products
               </Link>
+              <Link to="/admin/brands" className="text-muted-foreground hover:text-foreground">
+                Brands
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">

@@ -1,6 +1,7 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { supabase } from '@/lib/supabaseClient'
+import { extractMetrcReference } from '@/lib/metrc'
 import type {
   BrandRow,
   CannabinoidRow,
@@ -13,6 +14,7 @@ import type {
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
+import { Field, inputClass } from '@/components/ui/Field'
 import { ProfileRowsEditor, type ProfileRowValue } from './ProfileRowsEditor'
 
 const CATEGORY_OPTIONS: Array<{ value: ProductCategory; label: string }> = [
@@ -131,7 +133,7 @@ export function AdminProductFormPage() {
       dispensary_id: null,
       category,
       strain_type: strainType || null,
-      metrc_reference: metrcReference.trim(),
+      metrc_reference: extractMetrcReference(metrcReference),
       description: description || null,
       image_url: imageUrl || null,
       is_active: isActive,
@@ -244,7 +246,7 @@ export function AdminProductFormPage() {
             />
           </Field>
 
-          <Field label="Metrc reference (retailId from the QR code)">
+          <Field label="Metrc reference (retailId, or paste the full 1a4.com URL)">
             <input
               required
               value={metrcReference}
@@ -352,18 +354,6 @@ export function AdminProductFormPage() {
           </Button>
         </div>
       </form>
-    </div>
-  )
-}
-
-const inputClass =
-  'w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary-500 focus:outline-none'
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="space-y-1">
-      <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      {children}
     </div>
   )
 }

@@ -119,9 +119,10 @@ without having scanned anything.
 ## Admin
 
 `/admin/login` → `/admin/products`, gated by [`RequireAdmin`](src/pages/admin/RequireAdmin.tsx).
-Covers create/edit/delete for products plus their terpene and cannabinoid percentage
-rows. Brands, dispensaries, and lab results don't have a dedicated admin UI yet in this
-MVP — manage those directly in the Supabase Studio table editor for now.
+Covers create/edit/delete for products (plus their terpene and cannabinoid percentage
+rows) and brands (`/admin/brands`), including slug auto-generation from the name.
+Dispensaries and lab results don't have a dedicated admin UI yet in this MVP — manage
+those directly in the Supabase Studio table editor for now.
 
 ## Project structure
 

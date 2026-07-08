@@ -128,12 +128,36 @@ export function ScanResultPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
       <div>
-        {p.brand && <p className="text-sm font-medium text-gold-400">{p.brand.name}</p>}
-        <h1 className="text-2xl font-bold tracking-tight text-balance">{p.name}</h1>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Badge variant="primary">{formatCategory(p.category)}</Badge>
-          {p.strain_type && <Badge variant="neutral">{capitalize(p.strain_type)}</Badge>}
-          {verifiedLab && <Badge variant="gold">✓ Verified lab partner</Badge>}
+        <div className="flex items-start gap-4">
+          {p.image_url && (
+            <img
+              src={p.image_url}
+              alt={p.name}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+              className="h-24 w-24 shrink-0 rounded-2xl border border-border bg-surface object-cover sm:h-32 sm:w-32"
+            />
+          )}
+          <div className="min-w-0 flex-1">
+            {p.brand && <p className="text-sm font-medium text-gold-400">{p.brand.name}</p>}
+            <h1 className="text-2xl font-bold tracking-tight text-balance">{p.name}</h1>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Badge variant="primary">{formatCategory(p.category)}</Badge>
+              {p.strain_type && <Badge variant="neutral">{capitalize(p.strain_type)}</Badge>}
+              {verifiedLab && <Badge variant="gold">✓ Verified lab partner</Badge>}
+            </div>
+          </div>
+          {p.brand?.logo_url && (
+            <img
+              src={p.brand.logo_url}
+              alt={p.brand.name}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+              className="h-14 w-14 shrink-0 rounded-full border border-border bg-white object-contain p-2 sm:h-16 sm:w-16"
+            />
+          )}
         </div>
         {p.description && <p className="mt-3 text-sm text-muted-foreground">{p.description}</p>}
       </div>
