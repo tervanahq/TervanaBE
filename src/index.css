@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Base surfaces — near-black, mobile-first dark theme */
+  --color-background: #07080a;
+  --color-foreground: #f2f4f1;
+  --color-surface: #101210;
+  --color-surface-hover: #171a17;
+  --color-border: #21251f;
+  --color-muted: #171a17;
+  --color-muted-foreground: #98a398;
+
+  /* Primary accent — green (plant / cannabis association) */
+  --color-primary-50: #eafbf0;
+  --color-primary-100: #cff5dc;
+  --color-primary-200: #a0eabc;
+  --color-primary-300: #6dda98;
+  --color-primary-400: #3fc378;
+  --color-primary-500: #22a05c;
+  --color-primary-600: #178049;
+  --color-primary-700: #14653c;
+  --color-primary-800: #135030;
+  --color-primary-900: #0f3f28;
+  --color-primary-950: #082418;
+
+  /* Secondary accent — gold (premium / quality signal) */
+  --color-gold-50: #fdf8e9;
+  --color-gold-100: #faeec4;
+  --color-gold-200: #f3dd8c;
+  --color-gold-300: #eac559;
+  --color-gold-400: #dfae3c;
+  --color-gold-500: #c7962c;
+  --color-gold-600: #a67821;
+  --color-gold-700: #825d1e;
+  --color-gold-800: #6b4c1f;
+  --color-gold-900: #5a401e;
+  --color-gold-950: #33220f;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
