@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router'
 import { parseScanInput } from '@/lib/metrc'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { QrScanner } from '@/components/scan/QrScanner'
 
 export function HomePage() {
   const navigate = useNavigate()
   const [value, setValue] = useState('')
   const [formError, setFormError] = useState<string | null>(null)
+  const [scannerOpen, setScannerOpen] = useState(false)
+  const [cameraNotice, setCameraNotice] = useState<string | null>(null)
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -18,6 +21,11 @@ export function HomePage() {
     }
     setFormError(null)
     navigate(`/scan/${parsed.retailId}${parsed.index ? `/${parsed.index}` : ''}`)
+  }
+
+  function handleCameraUnavailable(message: string) {
+    setScannerOpen(false)
+    setCameraNotice(`${message} Enter the code manually below.`)
   }
 
   return (
@@ -35,6 +43,27 @@ export function HomePage() {
           plain language.
         </p>
       </div>
+
+      {scannerOpen ? (
+        <QrScanner
+          onCancel={() => setScannerOpen(false)}
+          onUnavailable={handleCameraUnavailable}
+        />
+      ) : (
+        <Button
+          type="button"
+          size="lg"
+          className="w-full"
+          onClick={() => {
+            setCameraNotice(null)
+            setScannerOpen(true)
+          }}
+        >
+          Scan Product
+        </Button>
+      )}
+
+      {cameraNotice && <p className="text-center text-sm text-gold-400">{cameraNotice}</p>}
 
       <Card className="space-y-4">
         <h2 className="text-sm font-semibold text-foreground">Have a code already?</h2>
