@@ -11,6 +11,8 @@ interface AuthContextValue {
   isAdmin: boolean
   signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
+  requestPasswordReset: (email: string) => Promise<{ error: string | null }>
+  updatePassword: (newPassword: string) => Promise<{ error: string | null }>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -70,6 +72,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
+  async function requestPasswordReset(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin/reset-password`,
+    })
+    return { error: error?.message ?? null }
+  }
+
+  async function updatePassword(newPassword: string) {
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    return { error: error?.message ?? null }
+  }
+
   const value: AuthContextValue = {
     session,
     user: session?.user ?? null,
@@ -78,6 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin: profile?.role === 'admin',
     signInWithPassword,
     signOut,
+    requestPasswordReset,
+    updatePassword,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

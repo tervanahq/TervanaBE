@@ -5,6 +5,7 @@ import { HomePage } from '@/pages/HomePage'
 import { ScanResultPage } from '@/pages/ScanResultPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { AdminLoginPage } from '@/pages/admin/AdminLoginPage'
+import { AdminResetPasswordPage } from '@/pages/admin/AdminResetPasswordPage'
 import { AdminLayout } from '@/pages/admin/AdminLayout'
 import { RequireAdmin } from '@/pages/admin/RequireAdmin'
 import { AdminProductsListPage } from '@/pages/admin/AdminProductsListPage'
@@ -23,6 +24,7 @@ function App() {
           </Route>
 
           <Route path="admin/login" element={<AdminLoginPage />} />
+          <Route path="admin/reset-password" element={<AdminResetPasswordPage />} />
           <Route element={<RequireAdmin />}>
             <Route element={<AdminLayout />}>
               <Route path="admin/products" element={<AdminProductsListPage />} />
