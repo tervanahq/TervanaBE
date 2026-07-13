@@ -19,6 +19,7 @@ interface QrScannerProps {
 export function QrScanner({ onCancel, onUnavailable }: QrScannerProps) {
   const navigate = useNavigate()
   const [scanError, setScanError] = useState<string | null>(null)
+  const [lastRawValue, setLastRawValue] = useState<string | null>(null)
   const [paused, setPaused] = useState(false)
 
   function handleScan(detectedCodes: IDetectedBarcode[]) {
@@ -28,6 +29,7 @@ export function QrScanner({ onCancel, onUnavailable }: QrScannerProps) {
     const parsed = parseScanInput(rawValue)
     if (!parsed) {
       setScanError("That QR code doesn't look like a product code. Try again.")
+      setLastRawValue(rawValue)
       return
     }
 
@@ -55,7 +57,16 @@ export function QrScanner({ onCancel, onUnavailable }: QrScannerProps) {
           video: 'object-cover',
         }}
       />
-      {scanError && <p className="text-sm text-red-400">{scanError}</p>}
+      {scanError && (
+        <div className="space-y-1">
+          <p className="text-sm text-red-400">{scanError}</p>
+          {lastRawValue && (
+            <p className="rounded-lg border border-border bg-surface p-2 font-mono text-xs break-all text-muted-foreground">
+              Scanned text: {lastRawValue}
+            </p>
+          )}
+        </div>
+      )}
       <Button type="button" variant="outline" onClick={onCancel} className="w-full">
         Cancel
       </Button>
