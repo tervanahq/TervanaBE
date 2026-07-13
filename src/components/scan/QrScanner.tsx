@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
 import { Scanner, type IDetectedBarcode, type IScannerError } from '@yudiel/react-qr-scanner'
-import { parseScanInput } from '@/lib/metrc'
+import { parseScanInput, type ParsedScan } from '@/lib/metrc'
 import { Button } from '@/components/ui/Button'
 
 const ERROR_MESSAGES: Partial<Record<IScannerError['kind'], string>> = {
@@ -12,14 +11,14 @@ const ERROR_MESSAGES: Partial<Record<IScannerError['kind'], string>> = {
 }
 
 interface QrScannerProps {
+  /** Called once with the parsed result on a successful decode. */
+  onDecode: (parsed: ParsedScan) => void
   onCancel: () => void
   onUnavailable: (message: string) => void
 }
 
-export function QrScanner({ onCancel, onUnavailable }: QrScannerProps) {
-  const navigate = useNavigate()
+export function QrScanner({ onDecode, onCancel, onUnavailable }: QrScannerProps) {
   const [scanError, setScanError] = useState<string | null>(null)
-  const [lastRawValue, setLastRawValue] = useState<string | null>(null)
   const [paused, setPaused] = useState(false)
 
   function handleScan(detectedCodes: IDetectedBarcode[]) {
@@ -29,13 +28,12 @@ export function QrScanner({ onCancel, onUnavailable }: QrScannerProps) {
     const parsed = parseScanInput(rawValue)
     if (!parsed) {
       setScanError("That QR code doesn't look like a product code. Try again.")
-      setLastRawValue(rawValue)
       return
     }
 
     setScanError(null)
     setPaused(true)
-    navigate(`/scan/${parsed.retailId}${parsed.index ? `/${parsed.index}` : ''}`)
+    onDecode(parsed)
   }
 
   function handleError(error: IScannerError) {
@@ -57,16 +55,7 @@ export function QrScanner({ onCancel, onUnavailable }: QrScannerProps) {
           video: 'object-cover',
         }}
       />
-      {scanError && (
-        <div className="space-y-1">
-          <p className="text-sm text-red-400">{scanError}</p>
-          {lastRawValue && (
-            <p className="rounded-lg border border-border bg-surface p-2 font-mono text-xs break-all text-muted-foreground">
-              Scanned text: {lastRawValue}
-            </p>
-          )}
-        </div>
-      )}
+      {scanError && <p className="text-sm text-red-400">{scanError}</p>}
       <Button type="button" variant="outline" onClick={onCancel} className="w-full">
         Cancel
       </Button>

@@ -129,8 +129,10 @@ create table public.products (
     category in ('flower', 'pre_roll', 'vape', 'concentrate', 'edible', 'tincture', 'topical', 'other')
   ),
   strain_type text check (strain_type in ('sativa', 'indica', 'hybrid')),
-  -- The retailId parsed from the scanned Metrc/1a4 QR code, e.g.
-  -- "1a4120300000c1f000005534" from https://app.1a4.com/landingpage/{retailId}/{index}.
+  -- The code parsed from the scanned Metrc/1a4 QR, e.g. "5LO1I9DSO0DPBE65C2DC"
+  -- from https://1a4.com/{code}. See README "Scan resolution logic" -- this
+  -- comment originally described an incorrect assumed format (app.1a4.com/
+  -- landingpage/{retailId}/{index}), confirmed wrong against a real package.
   metrc_reference text not null unique,
   description text,
   image_url text,
@@ -140,7 +142,7 @@ create table public.products (
 );
 
 comment on column public.products.metrc_reference is
-  'retailId segment parsed from the scanned 1a4.com QR URL. Looked up directly -- see /scan route.';
+  'Code parsed from the scanned 1a4.com QR URL (https://1a4.com/{code}). Looked up directly -- see /scan route.';
 
 create index products_brand_id_idx on public.products (brand_id);
 create index products_dispensary_id_idx on public.products (dispensary_id);
@@ -254,7 +256,7 @@ create table public.scans (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references public.profiles (id) on delete set null,
   product_id uuid references public.products (id) on delete set null,
-  -- Raw retailId as scanned, kept even on a miss so we know what to add next.
+  -- Raw code as scanned, kept even on a miss so we know what to add next.
   metrc_reference_scanned text not null,
   found boolean not null default false,
   source text not null default 'qr_scan' check (source in ('qr_scan', 'manual_search', 'admin_preview')),

@@ -46,6 +46,7 @@ export function HomePage() {
 
       {scannerOpen ? (
         <QrScanner
+          onDecode={(parsed) => navigate(`/scan/${parsed.retailId}${parsed.index ? `/${parsed.index}` : ''}`)}
           onCancel={() => setScannerOpen(false)}
           onUnavailable={handleCameraUnavailable}
         />

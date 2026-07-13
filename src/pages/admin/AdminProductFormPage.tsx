@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
 import { Field, inputClass } from '@/components/ui/Field'
+import { QrScanner } from '@/components/scan/QrScanner'
 import { ProfileRowsEditor, type ProfileRowValue } from './ProfileRowsEditor'
 
 const CATEGORY_OPTIONS: Array<{ value: ProductCategory; label: string }> = [
@@ -64,6 +65,9 @@ export function AdminProductFormPage() {
 
   const [terpeneRows, setTerpeneRows] = useState<ProfileRowValue[]>([])
   const [cannabinoidRows, setCannabinoidRows] = useState<ProfileRowValue[]>([])
+
+  const [scannerOpen, setScannerOpen] = useState(false)
+  const [cameraNotice, setCameraNotice] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -246,14 +250,35 @@ export function AdminProductFormPage() {
             />
           </Field>
 
-          <Field label="Metrc reference (retailId, or paste the full 1a4.com URL)">
-            <input
-              required
-              value={metrcReference}
-              onChange={(e) => setMetrcReference(e.target.value)}
-              placeholder="1a4120300000c1f000005534"
-              className={`${inputClass} font-mono`}
-            />
+          <Field label="Metrc reference (the code from the product's QR, or paste the full 1a4.com link)">
+            {scannerOpen ? (
+              <QrScanner
+                onDecode={(parsed) => {
+                  setMetrcReference(parsed.retailId)
+                  setScannerOpen(false)
+                  setCameraNotice(null)
+                }}
+                onCancel={() => setScannerOpen(false)}
+                onUnavailable={(message) => {
+                  setScannerOpen(false)
+                  setCameraNotice(message)
+                }}
+              />
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  required
+                  value={metrcReference}
+                  onChange={(e) => setMetrcReference(e.target.value)}
+                  placeholder="5LO1I9DSO0DPBE65C2DC"
+                  className={`${inputClass} font-mono`}
+                />
+                <Button type="button" variant="outline" onClick={() => setScannerOpen(true)}>
+                  Scan
+                </Button>
+              </div>
+            )}
+            {cameraNotice && <p className="mt-1 text-xs text-gold-400">{cameraNotice}</p>}
           </Field>
 
           <div className="grid grid-cols-2 gap-4">

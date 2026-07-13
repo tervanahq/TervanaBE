@@ -49,7 +49,7 @@ after review (see that file's header comment for what got corrected and why).
 | `profiles` | Extends `auth.users` with `role` (`user`/`admin`) and `subscription_tier` (`free`/`plus`, reserved for a future paywall). Auto-created via trigger on signup. |
 | `brands` | Brand records. `is_sponsored` / `sponsorship_tier` back sponsored placement. |
 | `dispensaries` | Dispensary records. `is_white_label_partner` flags a licensed white-label lookup page; `owner_user_id` is reserved for a future dispensary-portal login (unused today). |
-| `products` | Core product record — name, brand, category, strain type, and `metrc_reference` (the retailId parsed from the scanned QR, unique, indexed). |
+| `products` | Core product record — name, brand, category, strain type, and `metrc_reference` (the code parsed from the scanned QR, unique, indexed — see "Scan resolution logic" below). |
 | `terpenes` | Reference/educational data: aroma, reported effects, boiling point, "also found in" examples. Not product-specific. |
 | `cannabinoids` | Same idea for the six major cannabinoids. |
 | `product_terpene_profile` | Join table: product ↔ terpene ↔ percentage. |
@@ -64,7 +64,7 @@ read policies without a schema rework; a `dispensaries.owner_user_id` column is 
 for a future dispensary-owner portal.
 
 **A modeling nuance worth knowing:** `products.metrc_reference` is unique per row, and a
-retailId corresponds to a specific scanned package/listing, not necessarily a
+scanned code corresponds to a specific scanned package/listing, not necessarily a
 platonic "this brand's Blue Dream flower." If the same nominal product is sold as
 multiple batches/listings, you'll get multiple `products` rows for what a person would
 call "one product." That matches the schema as specified; if that turns out to be
@@ -86,35 +86,47 @@ noisy in practice, splitting into a `product_lines` (conceptual product) +
 
 ## Scan resolution logic
 
-The Metrc QR code on a NY product's packaging encodes a URL like:
+**Confirmed against real physical packaging** (2026-07-14) — the QR code encodes a short
+URL:
 
 ```
-https://app.1a4.com/landingpage/{retailId}/{index}
-e.g. https://app.1a4.com/landingpage/1a4120300000c1f000005534/0
+https://1a4.com/{code}
+e.g. https://1a4.com/5LO1I9DSO0DPBE65C2DC
 ```
 
-`retailId` is a 24-character alphanumeric string starting with `1a4`; the trailing
-segment is a unit/index suffix. **Tervana never fetches or scrapes the 1a4.com page** —
-it's a client-side app with nothing meaningful to scrape server-side. Instead:
+`code` has no fixed length or prefix (real samples seen so far are 20–22 alphanumeric
+characters). This replaced an earlier, incorrect assumption
+(`https://app.1a4.com/landingpage/{retailId}/{index}`, a 24-char id starting with `1a4`) —
+that longer form turns out to be what the *phone's native camera app* shows after 1a4.com
+server-side redirects the short URL, not what the QR itself encodes. Parsing
+([`src/lib/metrc.ts`](src/lib/metrc.ts)) is intentionally lenient on the code's exact
+shape and still tolerant of the original app./landingpage//index variant too, in case
+some packaging uses that form directly. **Tervana never fetches or scrapes the 1a4.com
+page** — it's a client-side app with nothing meaningful to scrape server-side, and we
+only ever parse the QR/URL text itself, never follow the redirect.
 
 1. The QR resolves into the app at `/scan/:retailId/:index?`
-   ([`src/App.tsx`](src/App.tsx)).
-2. [`ScanResultPage`](src/pages/ScanResultPage.tsx) validates the `retailId` shape
+   ([`src/App.tsx`](src/App.tsx)) — camera-based scanning on the home page
+   ([`QrScanner`](src/components/scan/QrScanner.tsx), via `@yudiel/react-qr-scanner`)
+   reads the code directly off the QR and routes here; manual paste works the same way.
+2. [`ScanResultPage`](src/pages/ScanResultPage.tsx) validates the code shape
    (via [`isValidRetailId`](src/lib/metrc.ts)) and queries
    `products` where `metrc_reference = retailId`, embedding its brand, terpene profile,
    cannabinoid profile, and lab results in one request.
 3. **Found:** renders the branded profile page.
 4. **Not found:** shows a "not yet in our database" state with a link to reconstruct the
-   original `https://app.1a4.com/landingpage/...` URL (a plain outbound link, not a
-   fetch) so the user can still reach the official compliance page.
+   original `https://1a4.com/...` URL (a plain outbound link, not a fetch) so the user can
+   still reach the official compliance page.
 5. Either way, a row is written to `scans` (`metrc_reference_scanned`, `found`,
    `product_id` nullable on a miss) so misses are a queryable worklist for what to add
-   to the admin next. Malformed input (doesn't match the retailId shape at all) is
+   to the admin next. Malformed input (doesn't match the code shape at all) is
    shown its own state and isn't logged, since there's nothing actionable to add for it.
 
-The home page also accepts a manually pasted 1a4.com URL or bare retailId
+The home page also accepts a manually pasted 1a4.com URL or bare code
 ([`parseScanInput`](src/lib/metrc.ts)), for testing and for anyone who lands on the site
-without having scanned anything.
+without having scanned anything. The admin product form has its own "Scan" button (same
+`QrScanner` component) that fills the Metrc reference field directly from the QR, so
+whoever's entering product data doesn't need to manually type or copy the code.
 
 ## Admin
 
