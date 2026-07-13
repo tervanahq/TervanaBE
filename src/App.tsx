@@ -10,6 +10,7 @@ import { AdminLayout } from '@/pages/admin/AdminLayout'
 import { RequireAdmin } from '@/pages/admin/RequireAdmin'
 import { AdminProductsListPage } from '@/pages/admin/AdminProductsListPage'
 import { AdminProductFormPage } from '@/pages/admin/AdminProductFormPage'
+import { AdminProductImportPage } from '@/pages/admin/AdminProductImportPage'
 import { AdminBrandsListPage } from '@/pages/admin/AdminBrandsListPage'
 import { AdminBrandFormPage } from '@/pages/admin/AdminBrandFormPage'
 
@@ -29,6 +30,7 @@ function App() {
             <Route element={<AdminLayout />}>
               <Route path="admin/products" element={<AdminProductsListPage />} />
               <Route path="admin/products/new" element={<AdminProductFormPage />} />
+              <Route path="admin/products/import" element={<AdminProductImportPage />} />
               <Route path="admin/products/:id/edit" element={<AdminProductFormPage />} />
               <Route path="admin/brands" element={<AdminBrandsListPage />} />
               <Route path="admin/brands/new" element={<AdminBrandFormPage />} />

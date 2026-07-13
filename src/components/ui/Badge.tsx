@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react'
 
-type Variant = 'primary' | 'gold' | 'neutral' | 'warning'
+type Variant = 'primary' | 'gold' | 'neutral' | 'warning' | 'danger'
 
 const variantClasses: Record<Variant, string> = {
   primary: 'bg-primary-950 text-primary-300 border-primary-800',
   gold: 'bg-gold-950 text-gold-300 border-gold-800',
   neutral: 'bg-muted text-muted-foreground border-border',
   warning: 'bg-amber-950 text-amber-300 border-amber-800',
+  danger: 'bg-red-950 text-red-300 border-red-800',
 }
 
 export function Badge({

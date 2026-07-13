@@ -36,9 +36,14 @@ export function AdminProductsListPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Products</h1>
-        <Link to="/admin/products/new" className={buttonClasses()}>
-          New product
-        </Link>
+        <div className="flex gap-3">
+          <Link to="/admin/products/import" className={buttonClasses('outline')}>
+            Bulk import
+          </Link>
+          <Link to="/admin/products/new" className={buttonClasses()}>
+            New product
+          </Link>
+        </div>
       </div>
 
       {loading ? (
