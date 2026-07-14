@@ -144,6 +144,17 @@ export function AdminBrandFormPage() {
             </Field>
           </div>
 
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt={`${name || 'Brand'} logo preview`}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+              className="h-14 w-14 shrink-0 rounded-full border border-border bg-white object-contain p-2"
+            />
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <Field label="Sponsored placement">
               <label className="mt-2.5 flex items-center gap-2 text-sm">

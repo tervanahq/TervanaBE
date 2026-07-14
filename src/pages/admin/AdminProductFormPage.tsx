@@ -69,6 +69,8 @@ export function AdminProductFormPage() {
   const [scannerOpen, setScannerOpen] = useState(false)
   const [cameraNotice, setCameraNotice] = useState<string | null>(null)
 
+  const selectedBrand = brands.find((b) => b.id === brandId) ?? null
+
   useEffect(() => {
     async function load() {
       setLoading(true)
@@ -348,6 +350,31 @@ export function AdminProductFormPage() {
           <Field label="Image URL">
             <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} />
           </Field>
+
+          {(imageUrl || selectedBrand?.logo_url) && (
+            <div className="flex items-center gap-4">
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Product preview"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                  className="h-20 w-20 shrink-0 rounded-2xl border border-border bg-surface object-cover"
+                />
+              )}
+              {selectedBrand?.logo_url && (
+                <img
+                  src={selectedBrand.logo_url}
+                  alt={`${selectedBrand.name} logo`}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                  className="h-14 w-14 shrink-0 rounded-full border border-border bg-white object-contain p-2"
+                />
+              )}
+            </div>
+          )}
         </Card>
 
         <Card>
