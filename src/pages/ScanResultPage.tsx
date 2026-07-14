@@ -141,7 +141,7 @@ export function ScanResultPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
-      <div>
+      <div className="animate-fade-up">
         <div className="flex items-start gap-4">
           {p.image_url && (
             <img
@@ -177,7 +177,7 @@ export function ScanResultPage() {
       </div>
 
       {sortedCannabinoids.length > 0 && (
-        <Card>
+        <Card className="animate-fade-up [animation-delay:0.1s]">
           <h2 className="mb-4 text-sm font-semibold tracking-wide text-gold-400 uppercase">
             Cannabinoids
           </h2>
@@ -196,7 +196,7 @@ export function ScanResultPage() {
       )}
 
       {sortedTerpenes.length > 0 && (
-        <Card>
+        <Card className="animate-fade-up [animation-delay:0.2s]">
           <div className="mb-4 flex items-baseline justify-between">
             <h2 className="text-sm font-semibold tracking-wide text-primary-400 uppercase">
               Terpene Profile
@@ -251,7 +251,7 @@ export function ScanResultPage() {
       )}
 
       {p.lab_results.length > 0 && (
-        <Card>
+        <Card className="animate-fade-up [animation-delay:0.3s]">
           <h2 className="mb-3 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
             Lab Results
           </h2>
