@@ -131,6 +131,7 @@ export function ScanResultPage() {
   const sortedCannabinoids = [...p.cannabinoid_profile].sort((a, b) => b.percentage - a.percentage)
   const maxTerpene = Math.max(...sortedTerpenes.map((t) => t.percentage), 0.0001)
   const maxCannabinoid = Math.max(...sortedCannabinoids.map((c) => c.percentage), 0.0001)
+  const totalTerpenePct = sortedTerpenes.reduce((sum, t) => sum + t.percentage, 0)
   const verifiedLab = p.lab_results.find((lab) => lab.is_verified_partner)
 
   return (
@@ -191,9 +192,14 @@ export function ScanResultPage() {
 
       {sortedTerpenes.length > 0 && (
         <Card>
-          <h2 className="mb-4 text-sm font-semibold tracking-wide text-primary-400 uppercase">
-            Terpene Profile
-          </h2>
+          <div className="mb-4 flex items-baseline justify-between">
+            <h2 className="text-sm font-semibold tracking-wide text-primary-400 uppercase">
+              Terpene Profile
+            </h2>
+            <span className="text-sm font-semibold text-foreground">
+              Total: {totalTerpenePct.toFixed(2)}%
+            </span>
+          </div>
           <div className="space-y-5">
             {sortedTerpenes.map(({ percentage, terpene }) => (
               <div key={terpene.id}>
