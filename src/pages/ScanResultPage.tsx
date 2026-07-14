@@ -11,7 +11,7 @@ import { ProfileMeter } from '@/components/scan/ProfileMeter'
 
 type Status = 'loading' | 'invalid' | 'found' | 'not-found' | 'error'
 
-const TOP_TERPENE_COUNT = 5
+const TOP_TERPENE_COUNT = 4
 
 const PRODUCT_SELECT = `*,
   brand:brands(*),
