@@ -11,6 +11,8 @@ import { ProfileMeter } from '@/components/scan/ProfileMeter'
 
 type Status = 'loading' | 'invalid' | 'found' | 'not-found' | 'error'
 
+const TOP_TERPENE_COUNT = 5
+
 const PRODUCT_SELECT = `*,
   brand:brands(*),
   terpene_profile:product_terpene_profile(percentage, terpene:terpenes(*)),
@@ -22,6 +24,7 @@ export function ScanResultPage() {
   const [status, setStatus] = useState<Status>('loading')
   const [product, setProduct] = useState<ProductWithProfile | null>(null)
   const [attempt, setAttempt] = useState(0)
+  const [showAllTerpenes, setShowAllTerpenes] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -132,6 +135,8 @@ export function ScanResultPage() {
   const maxTerpene = Math.max(...sortedTerpenes.map((t) => t.percentage), 0.0001)
   const maxCannabinoid = Math.max(...sortedCannabinoids.map((c) => c.percentage), 0.0001)
   const totalTerpenePct = sortedTerpenes.reduce((sum, t) => sum + t.percentage, 0)
+  const visibleTerpenes = showAllTerpenes ? sortedTerpenes : sortedTerpenes.slice(0, TOP_TERPENE_COUNT)
+  const hiddenTerpeneCount = sortedTerpenes.length - visibleTerpenes.length
   const verifiedLab = p.lab_results.find((lab) => lab.is_verified_partner)
 
   return (
@@ -201,7 +206,7 @@ export function ScanResultPage() {
             </span>
           </div>
           <div className="space-y-5">
-            {sortedTerpenes.map(({ percentage, terpene }) => (
+            {visibleTerpenes.map(({ percentage, terpene }) => (
               <div key={terpene.id}>
                 <ProfileMeter
                   label={terpene.name}
@@ -224,6 +229,24 @@ export function ScanResultPage() {
               </div>
             ))}
           </div>
+          {hiddenTerpeneCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllTerpenes(true)}
+              className="mt-4 w-full text-center text-xs font-medium text-primary-400 hover:underline"
+            >
+              Show {hiddenTerpeneCount} more terpene{hiddenTerpeneCount === 1 ? '' : 's'} ▾
+            </button>
+          )}
+          {showAllTerpenes && sortedTerpenes.length > TOP_TERPENE_COUNT && (
+            <button
+              type="button"
+              onClick={() => setShowAllTerpenes(false)}
+              className="mt-4 w-full text-center text-xs font-medium text-primary-400 hover:underline"
+            >
+              Show less ▴
+            </button>
+          )}
         </Card>
       )}
 
