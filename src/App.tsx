@@ -3,6 +3,8 @@ import { AuthProvider } from '@/context/AuthContext'
 import { Layout } from '@/components/layout/Layout'
 import { HomePage } from '@/pages/HomePage'
 import { ScanResultPage } from '@/pages/ScanResultPage'
+import { LearnPage } from '@/pages/LearnPage'
+import { LessonPage } from '@/pages/LessonPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { AdminLoginPage } from '@/pages/admin/AdminLoginPage'
 import { AdminResetPasswordPage } from '@/pages/admin/AdminResetPasswordPage'
@@ -22,6 +24,8 @@ function App() {
           <Route element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="scan/:retailId/:index?" element={<ScanResultPage />} />
+            <Route path="learn" element={<LearnPage />} />
+            <Route path="learn/:lessonId" element={<LessonPage />} />
           </Route>
 
           <Route path="admin/login" element={<AdminLoginPage />} />

@@ -2,7 +2,8 @@
 
 A terpene-focused cannabis education and lookup platform for NY consumers. Scan the QR
 code on a Metrc-tracked product's packaging and see a branded terpene/cannabinoid
-profile instead of raw compliance data.
+profile instead of raw compliance data. A Duolingo-style **Learn** path (`/learn`)
+teaches the underlying science in bite-size quiz lessons.
 
 ## Stack
 
@@ -128,6 +129,23 @@ without having scanned anything. The admin product form has its own "Scan" butto
 `QrScanner` component) that fills the Metrc reference field directly from the QR, so
 whoever's entering product data doesn't need to manually type or copy the code.
 
+## Learn (education path)
+
+`/learn` is a Duolingo-style lesson path: 4 units / 13 lessons / ~93 exercises
+(multiple-choice and match-pairs), with sequential unlocking, wrong answers re-queued
+until answered correctly, XP (10 per lesson, +5 perfect, 5 on replay), and a daily
+streak.
+
+- **Content** is hand-authored in [`src/data/learnContent.ts`](src/data/learnContent.ts)
+  and deliberately mirrors the seeded reference data (aromas, sources, boiling points,
+  psychoactivity) plus NY OCM adult-use rules — keep the two in sync if either changes.
+  Effects language stays in the same non-clinical register as the rest of the app; the
+  footer disclaimer applies.
+- **Progress** lives in localStorage ([`src/lib/learnProgress.ts`](src/lib/learnProgress.ts),
+  key `tervana.learn.v1`) because consumer users are anonymous. That module is the seam
+  to swap for Supabase-backed progress if learner accounts ever exist. Streaks use the
+  device's local calendar day, with a one-day grace period before display resets to 0.
+
 ## Admin
 
 `/admin/login` → `/admin/products`, gated by [`RequireAdmin`](src/pages/admin/RequireAdmin.tsx).
@@ -140,7 +158,8 @@ those directly in the Supabase Studio table editor for now.
 
 ```
 src/
-  lib/            Supabase client, Metrc QR parsing
+  lib/            Supabase client, Metrc QR parsing, Learn progress store
+  data/           Learn lesson content (units → lessons → exercises)
   types/          Hand-written DB types (mirrors the migration; see note in database.ts
                    about regenerating via `supabase gen types typescript`)
   context/         Auth context (session, profile, isAdmin)
@@ -148,8 +167,10 @@ src/
     ui/            Button, Badge, Card, Spinner
     layout/        Header, Footer (legal disclaimer), Layout
     scan/           ProfileMeter (terpene/cannabinoid percentage bar)
+    learn/          Inline SVG icons for the Learn feature
   pages/
     HomePage, ScanResultPage, NotFoundPage
+    LearnPage (lesson path), LessonPage (quiz player)
     admin/          Login, layout, guard, products list + form
 supabase/
   migrations/       Schema + RLS (seed data migration added once confirmed)

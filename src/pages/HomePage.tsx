@@ -1,10 +1,13 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { parseScanInput } from '@/lib/metrc'
-import { Button } from '@/components/ui/Button'
+import { Button, buttonClasses } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { QrScanner } from '@/components/scan/QrScanner'
 import { TervanaMark } from '@/components/brand/TervanaMark'
+import { units, totalLessonCount, type UnitColor } from '@/data/learnContent'
+import { completedCount, effectiveStreak, loadProgress } from '@/lib/learnProgress'
+import { BoltIcon, CheckIcon, FlameIcon } from '@/components/learn/LearnIcons'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -109,7 +112,82 @@ export function HomePage() {
           Plain-language effects and aroma notes, not a lab data sheet.
         </HowItWorksStep>
       </div>
+
+      <EducationSection />
     </div>
+  )
+}
+
+const unitNumberBadge: Record<UnitColor, string> = {
+  primary: 'border-primary-800 bg-primary-950 text-primary-300',
+  gold: 'border-gold-800 bg-gold-950 text-gold-300',
+  accent: 'border-accent-800 bg-accent-950 text-accent-300',
+}
+
+function EducationSection() {
+  const [progress] = useState(() => loadProgress())
+  const done = completedCount(progress)
+  const streak = effectiveStreak(progress)
+
+  return (
+    <section aria-labelledby="education-heading" className="animate-fade-up space-y-5 [animation-delay:0.56s]">
+      <div className="space-y-1.5 text-center">
+        <p className="text-sm font-semibold tracking-wide text-gold-400 uppercase">Education</p>
+        <h2 id="education-heading" className="text-xl font-bold tracking-tight text-balance sm:text-2xl">
+          Learn the science,{' '}
+          <span className="bg-gradient-to-r from-primary-400 via-primary-300 to-gold-400 bg-clip-text text-transparent">
+            Duolingo-style
+          </span>
+        </h2>
+        <p className="mx-auto max-w-md text-sm text-muted-foreground">
+          Bite-size quiz lessons on terpenes, cannabinoids, and smart consumption. Earn XP and
+          keep a daily streak — no account needed.
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-gradient-to-br from-primary-500/60 via-gold-400/50 to-accent-500/60 p-px shadow-lg shadow-primary-950/40">
+        <div className="space-y-4 rounded-[15px] bg-surface p-5">
+          <ul className="space-y-3">
+            {units.map((unit, i) => (
+              <li key={unit.id} className="flex items-center gap-3">
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-bold ${unitNumberBadge[unit.color]}`}
+                >
+                  {i + 1}
+                </span>
+                <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+                  {unit.title}
+                </p>
+                <span className="text-xs whitespace-nowrap text-muted-foreground">
+                  {unit.lessons.length} lessons
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          {done > 0 && (
+            <div className="flex items-center justify-center gap-5 border-t border-border pt-4 text-xs font-semibold text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <FlameIcon className={`h-4 w-4 ${streak > 0 ? 'text-orange-400' : 'text-muted-foreground/50'}`} />
+                {streak} day{streak === 1 ? '' : 's'}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <BoltIcon className="h-4 w-4 text-gold-400" />
+                {progress.xp} XP
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckIcon className="h-4 w-4 text-primary-400" />
+                {done}/{totalLessonCount} lessons
+              </span>
+            </div>
+          )}
+
+          <Link to="/learn" className={buttonClasses('primary', 'lg', 'w-full')}>
+            {done > 0 ? 'Continue learning' : 'Start learning'}
+          </Link>
+        </div>
+      </div>
+    </section>
   )
 }
 
