@@ -28,9 +28,18 @@ export interface MatchExercise {
 
 export type Exercise = ChoiceExercise | MatchExercise
 
+/** A teaching card shown before the quiz — every fact the exercises test appears here first. */
+export interface TeachCard {
+  title: string
+  body: string
+  /** Optional bullet facts rendered under the body. */
+  facts?: string[]
+}
+
 export interface Lesson {
   id: string
   title: string
+  teach: TeachCard[]
   exercises: Exercise[]
 }
 
@@ -57,6 +66,24 @@ export const units: Unit[] = [
       {
         id: 'basics-whats-in-the-plant',
         title: "What's in the plant?",
+        teach: [
+          {
+            title: 'It starts with trichomes',
+            body: 'Look closely at cannabis flower and you\'ll see a frosty, crystal-like coating. Those are trichomes — tiny resin glands that work as the plant\'s chemical factories, producing everything that makes cannabis feel like cannabis.',
+          },
+          {
+            title: 'Two families to know',
+            body: 'Trichomes produce two families of compounds, and Tervana profiles both on every product:',
+            facts: [
+              'Cannabinoids (THC, CBD, and friends) — plug into receptors called CB1 and CB2 in your body\'s endocannabinoid system.',
+              'Terpenes — aroma compounds found across the plant kingdom. The same molecules scent pine forests, citrus rinds, and lavender; cannabis just makes an unusually wide range of them.',
+            ],
+          },
+          {
+            title: 'They may work together',
+            body: 'THC drives the high, but it isn\'t the only compound shaping the experience — other cannabinoids and terpenes are widely reported to matter too. The idea that they all work together is called the "entourage effect." Early research is suggestive, but it isn\'t settled science.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -140,6 +167,24 @@ export const units: Unit[] = [
       {
         id: 'basics-reading-the-label',
         title: 'Reading the label',
+        teach: [
+          {
+            title: 'Potency, two ways',
+            body: 'How strength is listed depends on the product type:',
+            facts: [
+              'Flower and vapes: THC as a percentage of weight (e.g. "THC 22%").',
+              'Edibles and drinks: milligrams per serving. NY caps adult-use edibles at 10 mg THC per serving and 100 mg per package.',
+            ],
+          },
+          {
+            title: 'The tracking tag',
+            body: 'Metrc is New York\'s seed-to-sale tracking system. Every legal product carries a Metrc QR code that links to its compliance page — including lab-test information. That\'s the same code Tervana scans to show you a friendlier profile.',
+          },
+          {
+            title: 'Proof it was tested',
+            body: 'A COA (Certificate of Analysis) is the lab report: measured potency plus safety screens like pesticides and heavy metals. Legal NY packages also carry the OCM universal symbol, a batch number, and child-resistant packaging. No QR code or lab info at all? Red flag — probably not from a licensed dispensary.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -232,6 +277,20 @@ export const units: Unit[] = [
       {
         id: 'basics-indica-sativa',
         title: 'Indica, sativa & the hybrid truth',
+        teach: [
+          {
+            title: 'Where the words come from',
+            body: '"Indica" and "sativa" started as botanical labels describing plant shape and growing origin — short, broad-leaf plants versus tall, narrow-leaf plants. They were never guarantees of how a product feels.',
+          },
+          {
+            title: "Today, it's all hybrids",
+            body: 'After decades of crossbreeding, nearly everything on a dispensary shelf is genetically a hybrid, whatever the label says. Studies of commercial cannabis find that indica/sativa labels only loosely track actual chemistry — two "indicas" can have completely different profiles.',
+          },
+          {
+            title: 'Think chemistry-first',
+            body: 'The measured cannabinoid and terpene profile is a far better guide to how a product feels than its strain name — and that profile varies batch to batch, even under the same name. A plant classified by its chemistry instead of its looks is called a "chemovar." Checking the profile beats chasing the highest THC number.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -323,6 +382,24 @@ export const units: Unit[] = [
       {
         id: 'cannabinoids-thc-cbd',
         title: 'THC & CBD: the big two',
+        teach: [
+          {
+            title: 'THC: the headline act',
+            body: 'Tetrahydrocannabinol (THC) is the main intoxicating cannabinoid — the primary driver of the cannabis "high." Its most commonly reported effects: euphoria, relaxation, and appetite stimulation (the classic munchies).',
+          },
+          {
+            title: 'CBD: no high, still busy',
+            body: 'Cannabidiol (CBD) doesn\'t produce a high. It\'s widely associated with calm and relaxation in consumer reports — and it\'s commonly used to take the edge off THC\'s intensity when the two are combined.',
+          },
+          {
+            title: 'Reading the ratio',
+            body: 'The THC:CBD balance tells you a lot about what to expect:',
+            facts: [
+              '"THC 22% / CBD <1%" → THC-dominant. The experience is shaped almost entirely by THC — strongest-feeling, easiest to overdo.',
+              'A balanced 1:1 product → gentler, moderated. The usual suggestion for newer consumers who want a softer experience.',
+            ],
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -404,6 +481,24 @@ export const units: Unit[] = [
       {
         id: 'cannabinoids-minors',
         title: 'The minor cannabinoids',
+        teach: [
+          {
+            title: 'CBG: where it all starts',
+            body: 'Cannabigerol (CBG) is nicknamed the "mother cannabinoid": its acidic form, CBGA, is the chemical starting point the plant converts into THC and CBD as it matures. CBG itself is commonly associated with focus and mild energy.',
+          },
+          {
+            title: 'CBN: what THC becomes',
+            body: 'As cannabis ages, THC slowly oxidizes into cannabinol (CBN) — so older flower carries more of it. CBN is the minor cannabinoid most associated with sedation and sleep support, and one reason aged flower is often described as sleepier.',
+          },
+          {
+            title: 'THCV & CBC: the specialists',
+            body: 'Two more minors worth knowing:',
+            facts: [
+              'THCV — chemically similar to THC but often described as a clearer, shorter, more energizing experience. Notably linked to appetite suppression, the opposite of THC\'s munchies.',
+              'CBC — non-intoxicating, shares a chemical starting point with THC and CBD, and is commonly associated with mood support and synergy with other cannabinoids.',
+            ],
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -488,6 +583,21 @@ export const units: Unit[] = [
       {
         id: 'cannabinoids-psychoactive',
         title: 'Psychoactive or not?',
+        teach: [
+          {
+            title: 'The dividing line',
+            body: 'Of the six major cannabinoids, three are psychoactive — they produce some form of high:',
+            facts: [
+              'THC — the classic, benchmark high.',
+              'CBN — mildly psychoactive, much weaker than THC, leans sleepy.',
+              'THCV — a clearer, shorter, more energizing high.',
+            ],
+          },
+          {
+            title: 'The no-high three',
+            body: 'CBD, CBG, and CBC are non-intoxicating — they won\'t get you high. But "non-intoxicating" doesn\'t mean "does nothing": people still commonly report calm from CBD, focus and mild energy from CBG, and mood support from CBC. This lesson is a quick review — you\'ve met all six now.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -578,6 +688,20 @@ export const units: Unit[] = [
       {
         id: 'terpenes-what-they-do',
         title: 'What terpenes do',
+        teach: [
+          {
+            title: 'The aroma layer',
+            body: 'Terpenes are the compounds behind a product\'s smell and flavor — and, per the entourage-effect hypothesis, possibly part of the experience itself. They exist all across nature: the same molecules scent pine forests, citrus rinds, black pepper, and lavender. Cannabis just produces an unusually wide range of them.',
+          },
+          {
+            title: 'Meet myrcene',
+            body: 'Myrcene is the most abundant terpene in most cannabis cultivars — earthy, musky, with ripe-fruit notes. You\'ll also find it in mangoes and hops. Industry folklore ties myrcene-dominant strains to "couch-lock" relaxation; the story is popular but scientifically debated.',
+          },
+          {
+            title: 'The overachiever',
+            body: 'Beta-caryophyllene — the peppery, spicy terpene from black pepper and cloves — is the only terpene known to bind the body\'s CB2 cannabinoid receptor directly. That makes it a genuine chemical overlap between terpenes and cannabinoids, not just a scent. And linalool? That\'s lavender\'s signature — you\'ll meet it properly soon.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -644,6 +768,25 @@ export const units: Unit[] = [
       {
         id: 'terpenes-citrus-pine',
         title: 'The bright ones: citrus & pine',
+        teach: [
+          {
+            title: 'Citrus & pine',
+            body: 'The two brightest signatures in cannabis:',
+            facts: [
+              'Limonene — bright lemon-orange, straight from citrus rinds. Widely associated with uplifting, stress-relieving reports.',
+              'Alpha-pinene — fresh pine forest (pine needles, rosemary, basil). Cited for alertness and focus, even anecdotally for offsetting THC\'s short-term memory fog.',
+              'Beta-pinene — alpha\'s structural cousin, a bit more herbal and woody. The two usually show up together.',
+            ],
+          },
+          {
+            title: "The 'sativa' smell",
+            body: 'Terpinolene reads part floral, part piney, with light citrus. It\'s rarely the dominant terpene — but when it is, you get the complex profile people call the classic "sativa" scent, with uplifting, energizing associations.',
+          },
+          {
+            title: 'The rare cool one',
+            body: 'Eucalyptol is the cooling, minty terpene you know from eucalyptus and cold-relief products. In cannabis it\'s one of the rarer terpenes — usually present only in trace amounts.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -719,6 +862,25 @@ export const units: Unit[] = [
       {
         id: 'terpenes-calming',
         title: 'The calm ones: florals & sleepy notes',
+        teach: [
+          {
+            title: "Lavender's secret",
+            body: 'Linalool is the signature aroma of lavender — the reason it\'s the calm-down plant. It\'s broadly associated with relaxation and sleep support, the same association aromatherapy leans on far outside cannabis.',
+          },
+          {
+            title: 'The hoppy oddball',
+            body: 'Humulene shares its name family and aroma with hops, giving some cultivars an earthy, beer-like edge. It\'s unusual among cannabis terpenes: its reported association is appetite suppression, not stimulation.',
+          },
+          {
+            title: 'Soft florals & sleepy notes',
+            body: 'Three more calm-leaning terpenes to recognize:',
+            facts: [
+              'Bisabolol — the calming compound in chamomile, also all over skincare for its soothing reputation.',
+              'Geraniol — a sweet, rose-like floral note (roses, geraniums, lemongrass).',
+              'Nerolidol — woody, floral, faintly tropical; often mentioned alongside linalool in sleep-oriented cultivars.',
+            ],
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -789,6 +951,32 @@ export const units: Unit[] = [
       {
         id: 'terpenes-sniff-test',
         title: 'Sniff test: name that terpene',
+        teach: [
+          {
+            title: 'The big signatures',
+            body: 'This lesson is all recognition — trust your nose. First, the majors you\'ve already met:',
+            facts: [
+              'Myrcene — earthy, musky, ripe fruit (mangoes, hops)',
+              'Limonene — bright lemon-orange (citrus rinds)',
+              'Beta-caryophyllene — black-pepper spice (pepper, cloves)',
+              'Linalool — lavender floral',
+              'Alpha-pinene — fresh pine forest',
+              'Humulene — hop field, earthy beer-like edge',
+            ],
+          },
+          {
+            title: 'The deep cuts',
+            body: 'And the minor terpenes making their quiz debut:',
+            facts: [
+              'Valencene — sweet orange, named for Valencia oranges',
+              'Camphene — damp woodland, faint camphor (nutmeg, valerian root)',
+              'Eucalyptol & isopulegol — the two minty ones (isopulegol is menthol\'s relative)',
+              'Terpineol — lilac sweetness · Guaiol — woody with a rose undertone',
+              'Ocimene — sweet herbal top note (mint, orchids) · Nerolidol — woody-floral-tropical',
+              'Borneol — camphor and mint (camphor trees, rosemary) · Fenchol — basil\'s camphor-herbal note',
+            ],
+          },
+        ],
         exercises: [
           {
             type: 'match',
@@ -883,6 +1071,20 @@ export const units: Unit[] = [
       {
         id: 'smart-start-low',
         title: 'Start low, go slow',
+        teach: [
+          {
+            title: 'Edibles are slow',
+            body: 'Inhaled cannabis is felt within minutes and runs roughly 1–3 hours. Edibles go through digestion first: onset typically takes 30 minutes to 2 hours, and effects can last 4–8 hours. The classic mistake is taking a second dose because the first one "isn\'t working yet" — give it at least two hours.',
+          },
+          {
+            title: 'Dose like a beginner',
+            body: 'The widely shared starting point for new adult consumers is 2.5–5 mg THC — half a NY serving or less (this is common guidance, not medical advice). You can always take more next time; you can\'t take less once it lands. Hence the golden rule: start low, go slow.',
+          },
+          {
+            title: 'If it gets intense',
+            body: 'Cannabis alone isn\'t known to cause fatal overdose, but too much THC can be genuinely unpleasant. The fix is a calm space, water, a snack, and time — it passes. Never try to drive it off, and skip alcohol entirely: mixing the two intensifies impairment unpredictably.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -961,6 +1163,25 @@ export const units: Unit[] = [
       {
         id: 'smart-temperature',
         title: 'Temperature & terpenes',
+        teach: [
+          {
+            title: 'Terpenes are volatile',
+            body: 'Volatile means they evaporate easily with heat. That\'s why flower loses its nose over time — and why temperature control changes what you actually taste.',
+          },
+          {
+            title: 'Every terpene has a boiling point',
+            body: 'Lower boiling point = releases at lower heat. That\'s why many vaporizer users start low — to taste the delicate terpenes before they burn off:',
+            facts: [
+              'Alpha-pinene ~155°C · Beta-caryophyllene ~160°C · Myrcene ~167°C',
+              'Linalool ~198°C · Nerolidol ~276°C · Bisabolol ~314°C',
+              'Vaporizers typically run 160–220°C; a lit flame runs several hundred degrees hotter and destroys many delicate aroma compounds outright.',
+            ],
+          },
+          {
+            title: 'Storage is temperature too',
+            body: 'Heat, light, and air degrade terpenes — and slowly oxidize THC into sleepy CBN while they\'re at it. Cool, dark, and airtight is the standard.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',
@@ -1043,6 +1264,25 @@ export const units: Unit[] = [
       {
         id: 'smart-ny-rules',
         title: 'NY rules of the road',
+        teach: [
+          {
+            title: 'The basics',
+            body: 'New York\'s adult-use ground rules:',
+            facts: [
+              '21+ to buy or consume — no exceptions.',
+              'Legal products come only from dispensaries licensed by the OCM (Office of Cannabis Management); the state\'s dispensary-verification tool confirms a shop is legit.',
+              'Adult-use edibles: max 10 mg THC per serving, 100 mg per package.',
+            ],
+          },
+          {
+            title: 'Possession & sharing',
+            body: 'Adults 21+ can carry up to 3 ounces of flower (and 24 g of concentrate) in public; home limits are higher — up to 5 lbs — but must be stored securely. Gifting up to 3 oz to another adult 21+ is legal only when nothing of value changes hands. "Free gift with purchase" schemes are the classic unlicensed-shop loophole, and they\'re not legal.',
+          },
+          {
+            title: 'Where & how to keep it',
+            body: 'The baseline rule for smoking: generally allowed wherever tobacco smoking is allowed — but never in vehicles, and localities can add restrictions. Driving while impaired is illegal, period; "feeling fine" isn\'t a measurement. At home, store products locked, in original child-resistant packaging, away from kids and pets — edibles can look exactly like regular candy.',
+          },
+        ],
         exercises: [
           {
             type: 'choice',

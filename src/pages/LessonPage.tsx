@@ -6,17 +6,36 @@ import {
   type Exercise,
   type Lesson,
   type MatchExercise,
+  type TeachCard,
   type UnitColor,
 } from '@/data/learnContent'
 import { recordLessonCompletion, type CompletionResult } from '@/lib/learnProgress'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
-import { BoltIcon, CheckIcon, FlameIcon, StarIcon, XIcon } from '@/components/learn/LearnIcons'
+import { BoltIcon, BookIcon, CheckIcon, FlameIcon, StarIcon, XIcon } from '@/components/learn/LearnIcons'
 
 const barFill: Record<UnitColor, string> = {
   primary: 'bg-gradient-to-r from-primary-600 to-primary-400',
   gold: 'bg-gradient-to-r from-gold-600 to-gold-400',
   accent: 'bg-gradient-to-r from-accent-600 to-accent-400',
+}
+
+const teachAccent: Record<UnitColor, { eyebrow: string; icon: string; bullet: string }> = {
+  primary: {
+    eyebrow: 'text-primary-400',
+    icon: 'border-primary-800 bg-primary-950 text-primary-300',
+    bullet: 'bg-primary-400',
+  },
+  gold: {
+    eyebrow: 'text-gold-400',
+    icon: 'border-gold-800 bg-gold-950 text-gold-300',
+    bullet: 'bg-gold-400',
+  },
+  accent: {
+    eyebrow: 'text-accent-400',
+    icon: 'border-accent-800 bg-accent-950 text-accent-300',
+    bullet: 'bg-accent-400',
+  },
 }
 
 export function LessonPage() {
@@ -57,6 +76,10 @@ function makeOrder(exercise: Exercise): number[] {
 function LessonPlayer({ lesson, color }: { lesson: Lesson; color: UnitColor }) {
   const navigate = useNavigate()
   const total = lesson.exercises.length
+  const hasTeach = lesson.teach.length > 0
+
+  const [stage, setStage] = useState<'teach' | 'quiz'>(hasTeach ? 'teach' : 'quiz')
+  const [teachPos, setTeachPos] = useState(0)
 
   const [queue, setQueue] = useState<QueueItem[]>(() =>
     lesson.exercises.map((exercise, key) => ({ exercise, key })),
@@ -73,6 +96,11 @@ function LessonPlayer({ lesson, color }: { lesson: Lesson; color: UnitColor }) {
   const [quitPromptOpen, setQuitPromptOpen] = useState(false)
 
   const current = queue[pos]
+
+  // Teach cards count toward the same progress bar as the quiz, so the bar
+  // never resets or jumps back when quiz starts — it's one continuous lesson.
+  const teachSteps = lesson.teach.length
+  const totalSteps = teachSteps + total
 
   function handleCheck() {
     if (selected === null || current.exercise.type !== 'choice') return
@@ -116,7 +144,20 @@ function LessonPlayer({ lesson, color }: { lesson: Lesson; color: UnitColor }) {
     return <CompletionScreen lesson={lesson} result={result} missedCount={missedKeys.size} total={total} />
   }
 
-  const progressPct = Math.round((solvedCount / total) * 100)
+  const stepsDone = stage === 'teach' ? teachPos : teachSteps + solvedCount
+  const progressPct = Math.round((stepsDone / totalSteps) * 100)
+
+  function goToQuiz() {
+    setStage('quiz')
+  }
+
+  function handleTeachNext() {
+    if (teachPos + 1 < teachSteps) {
+      setTeachPos((p) => p + 1)
+    } else {
+      goToQuiz()
+    }
+  }
 
   return (
     <div className="mx-auto flex min-h-[70svh] max-w-2xl flex-col px-4 py-6">
@@ -142,47 +183,62 @@ function LessonPlayer({ lesson, color }: { lesson: Lesson; color: UnitColor }) {
             style={{ width: `${progressPct}%` }}
           />
         </div>
-        <p className="w-12 text-right text-xs font-bold text-muted-foreground tabular-nums">
-          {solvedCount}/{total}
-        </p>
-      </div>
-
-      <div className="mt-8 flex-1" key={`${current.key}-${pos}`}>
-        <p className="animate-fade-up text-lg leading-snug font-bold text-balance sm:text-xl">
-          {current.exercise.prompt}
-        </p>
-
-        {current.exercise.type === 'choice' ? (
-          <ChoiceBoard
-            exercise={current.exercise}
-            order={order}
-            selected={selected}
-            revealed={phase === 'feedback'}
-            onSelect={setSelected}
-          />
-        ) : (
-          <MatchBoard exercise={current.exercise} locked={phase === 'feedback'} onComplete={handleMatchComplete} />
+        {stage === 'quiz' && (
+          <p className="w-12 text-right text-xs font-bold text-muted-foreground tabular-nums">
+            {solvedCount}/{total}
+          </p>
         )}
       </div>
 
-      <div className="mt-8">
-        {phase === 'answer' ? (
-          current.exercise.type === 'choice' ? (
-            <Button size="lg" className="w-full" disabled={selected === null} onClick={handleCheck}>
-              Check
-            </Button>
-          ) : (
-            <p className="text-center text-xs text-muted-foreground">Match all the pairs to continue.</p>
-          )
-        ) : (
-          <FeedbackBanner
-            exercise={current.exercise}
-            wasCorrect={wasCorrect}
-            matchMistakes={matchMistakes}
-            onContinue={handleContinue}
-          />
-        )}
-      </div>
+      {stage === 'teach' ? (
+        <TeachScreen
+          card={lesson.teach[teachPos]}
+          color={color}
+          cardNumber={teachPos + 1}
+          cardCount={teachSteps}
+          onNext={handleTeachNext}
+          onSkip={goToQuiz}
+        />
+      ) : (
+        <>
+          <div className="mt-8 flex-1" key={`${current.key}-${pos}`}>
+            <p className="animate-fade-up text-lg leading-snug font-bold text-balance sm:text-xl">
+              {current.exercise.prompt}
+            </p>
+
+            {current.exercise.type === 'choice' ? (
+              <ChoiceBoard
+                exercise={current.exercise}
+                order={order}
+                selected={selected}
+                revealed={phase === 'feedback'}
+                onSelect={setSelected}
+              />
+            ) : (
+              <MatchBoard exercise={current.exercise} locked={phase === 'feedback'} onComplete={handleMatchComplete} />
+            )}
+          </div>
+
+          <div className="mt-8">
+            {phase === 'answer' ? (
+              current.exercise.type === 'choice' ? (
+                <Button size="lg" className="w-full" disabled={selected === null} onClick={handleCheck}>
+                  Check
+                </Button>
+              ) : (
+                <p className="text-center text-xs text-muted-foreground">Match all the pairs to continue.</p>
+              )
+            ) : (
+              <FeedbackBanner
+                exercise={current.exercise}
+                wasCorrect={wasCorrect}
+                matchMistakes={matchMistakes}
+                onContinue={handleContinue}
+              />
+            )}
+          </div>
+        </>
+      )}
 
       {quitPromptOpen && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
@@ -200,6 +256,73 @@ function LessonPlayer({ lesson, color }: { lesson: Lesson; color: UnitColor }) {
           </Card>
         </div>
       )}
+    </div>
+  )
+}
+
+function TeachScreen({
+  card,
+  color,
+  cardNumber,
+  cardCount,
+  onNext,
+  onSkip,
+}: {
+  card: TeachCard
+  color: UnitColor
+  cardNumber: number
+  cardCount: number
+  onNext: () => void
+  onSkip: () => void
+}) {
+  const accent = teachAccent[color]
+  const isLast = cardNumber === cardCount
+
+  return (
+    <div className="mt-8 flex flex-1 flex-col" key={cardNumber}>
+      <div className="flex-1">
+        <div className="animate-fade-up flex items-center gap-3">
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${accent.icon}`}>
+            <BookIcon className="h-5 w-5" />
+          </span>
+          <p className={`text-xs font-bold tracking-[0.15em] uppercase ${accent.eyebrow}`}>
+            Tip {cardNumber} of {cardCount}
+          </p>
+        </div>
+
+        <h2 className="animate-fade-up mt-4 text-xl font-bold text-balance sm:text-2xl [animation-delay:0.05s]">
+          {card.title}
+        </h2>
+        <p className="animate-fade-up mt-3 text-sm leading-relaxed text-muted-foreground [animation-delay:0.1s]">
+          {card.body}
+        </p>
+
+        {card.facts && (
+          <ul className="animate-fade-up mt-4 space-y-2.5 [animation-delay:0.15s]">
+            {card.facts.map((fact) => (
+              <li key={fact} className="flex gap-2.5 text-sm leading-relaxed text-foreground">
+                <span className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full ${accent.bullet}`} />
+                {fact}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="mt-8 space-y-2">
+        <Button size="lg" className="w-full" onClick={onNext}>
+          {isLast ? "Let's practice" : 'Continue'}
+        </Button>
+        {!isLast && (
+          <button
+            type="button"
+            onClick={onSkip}
+            className="w-full py-1 text-center text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+          >
+            Skip to quiz
+          </button>
+        )}
+      </div>
     </div>
   )
 }

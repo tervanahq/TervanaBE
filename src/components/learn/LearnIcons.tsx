@@ -54,6 +54,14 @@ export function StarIcon({ className = '' }: IconProps) {
   )
 }
 
+export function BookIcon({ className = '' }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22H19a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H6.5ZM6 4.5a.5.5 0 0 1 .5-.5H18v12H6.5c-.17 0-.34.02-.5.05V4.5ZM6.5 18H18v2H6.5a.5.5 0 0 1 0-2ZM8.75 6.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h4a.75.75 0 0 0 0-1.5h-4Z" />
+    </svg>
+  )
+}
+
 export function XIcon({ className = '' }: IconProps) {
   return (
     <svg
