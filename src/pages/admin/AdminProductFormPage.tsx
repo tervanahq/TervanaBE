@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams, useSearchParams } from 'react-router'
 import { supabase } from '@/lib/supabaseClient'
 import { extractMetrcReference } from '@/lib/metrc'
 import type {
@@ -45,6 +45,10 @@ export function AdminProductFormPage() {
   const { id } = useParams<{ id?: string }>()
   const isEditing = !!id
   const navigate = useNavigate()
+  // "Products to add" links here with ?ref=<code> to pre-fill the Metrc
+  // reference from a logged scan miss (new-product mode only).
+  const [searchParams] = useSearchParams()
+  const prefilledRef = !isEditing ? (searchParams.get('ref') ?? '') : ''
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -58,7 +62,7 @@ export function AdminProductFormPage() {
   const [brandId, setBrandId] = useState('')
   const [category, setCategory] = useState<ProductCategory>('flower')
   const [strainType, setStrainType] = useState<StrainType | ''>('')
-  const [metrcReference, setMetrcReference] = useState('')
+  const [metrcReference, setMetrcReference] = useState(prefilledRef)
   const [description, setDescription] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [isActive, setIsActive] = useState(true)

@@ -20,6 +20,9 @@ export function AdminLayout() {
               <Link to="/admin/brands" className="text-muted-foreground hover:text-foreground">
                 Brands
               </Link>
+              <Link to="/admin/misses" className="text-muted-foreground hover:text-foreground">
+                To add
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">

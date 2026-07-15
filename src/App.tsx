@@ -13,6 +13,7 @@ import { RequireAdmin } from '@/pages/admin/RequireAdmin'
 import { AdminProductsListPage } from '@/pages/admin/AdminProductsListPage'
 import { AdminProductFormPage } from '@/pages/admin/AdminProductFormPage'
 import { AdminProductImportPage } from '@/pages/admin/AdminProductImportPage'
+import { AdminScanMissesPage } from '@/pages/admin/AdminScanMissesPage'
 import { AdminBrandsListPage } from '@/pages/admin/AdminBrandsListPage'
 import { AdminBrandFormPage } from '@/pages/admin/AdminBrandFormPage'
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="admin/brands" element={<AdminBrandsListPage />} />
               <Route path="admin/brands/new" element={<AdminBrandFormPage />} />
               <Route path="admin/brands/:id/edit" element={<AdminBrandFormPage />} />
+              <Route path="admin/misses" element={<AdminScanMissesPage />} />
             </Route>
           </Route>
 
